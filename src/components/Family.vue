@@ -59,9 +59,11 @@ onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("isVisible"); // Konwencja CamelCase
+        entry.target.classList.add("isVisible");
       } else {
-        entry.target.classList.remove("isVisible");
+        if (window.innerWidth > 992) {
+          entry.target.classList.remove("isVisible");
+        }
       }
     });
   }, observerOptions);
@@ -130,11 +132,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .family-section {
-  padding: 120px 0; /* Zwiększony padding pionowy, by ścięcia nie nachodziły na zawartość */
+  padding: 120px 0;
   position: relative;
   z-index: 1;
+  overflow: hidden;
 
-  /* 🔥 Ścięte tło jako osobna bezpieczna warstwa pod spodem */
   &::before {
     content: "";
     position: absolute;
@@ -142,7 +144,7 @@ onMounted(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #0000003f; /* 👈 Tutaj definiujesz główny kolor tła tej sekcji */
+    background-color: #0000003f;
     clip-path: polygon(0 0, 100% 40px, 100% 100%, 0 #{"calc(100% - 40px)"});
     z-index: -1;
   }
@@ -162,12 +164,14 @@ onMounted(() => {
     margin-bottom: 40px;
     position: relative;
 
+    /* DESKTOP: Tytuł wyrównany do prawej */
     width: fit-content;
     margin-left: auto;
+    margin-right: 0;
     text-align: right;
 
     opacity: 0;
-    transform: translateX(80px);
+    transform: translateX(80px); /* Desktop: Wjazd z prawej strony */
     will-change: transform, opacity;
 
     transition:
@@ -178,8 +182,7 @@ onMounted(() => {
       content: "";
       position: absolute;
       bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 0; /* Rozwijanie linii od prawej strony */
       width: 0;
       height: 3px;
       background-color: $primaryColor;
@@ -192,7 +195,7 @@ onMounted(() => {
       transform: translateX(0);
 
       &::after {
-        width: 80%;
+        width: 100%; /* 🎯 Zmieniono z 80% na 100% – teraz linia idealnie pokrywa cały tekst */
       }
     }
   }
@@ -240,7 +243,7 @@ onMounted(() => {
 
     .clan-card {
       opacity: 0;
-      transform: translateX(-60px);
+      transform: translateX(-60px); /* Desktop: Oryginalny wjazd z lewej */
       transition:
         transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
         opacity 0.9s ease;
@@ -262,7 +265,7 @@ onMounted(() => {
 
     .clan-card {
       opacity: 0;
-      transform: translateX(60px);
+      transform: translateX(60px); /* Desktop: Oryginalny wjazd z prawej */
       transition:
         transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
         opacity 0.9s ease;
@@ -349,25 +352,55 @@ onMounted(() => {
   }
 }
 
+// ==========================================
+// 📱 RWD / MOBILNE DOSTOSOWANIE
+// ==========================================
 @media (max-width: 992px) {
   .family-section {
     padding: 80px 0;
 
     &::before {
-      /* Mniejsze cięcie na mobile, oszczędzające przestrzeń pionową */
       clip-path: polygon(0 0, 100% 20px, 100% 100%, 0 #{"calc(100% - 20px)"});
     }
 
     &__main-title {
       font-size: 2.2rem;
       margin-bottom: 30px;
-      transform: translateX(40px);
+
+      /* MOBILE: Nadpisujemy pozycjonowanie do środka */
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+
+      transform: translateY(
+        30px
+      ); /* Wyłącznie pionowy ruch od dołu na mobile */
+
+      &::after {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+      }
     }
   }
 
   .family-group__subtitle {
     font-size: 1.3rem;
     text-align: center !important;
+  }
+
+  /* MOBILE: Nadpisanie animacji kart na stabilny ruch pionowy */
+  .family-group--divisions,
+  .family-group--alliances {
+    .clan-card {
+      transform: translateY(40px);
+    }
+
+    &.isVisible {
+      .clan-card {
+        transform: translateY(0);
+      }
+    }
   }
 }
 </style>

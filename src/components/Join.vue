@@ -190,40 +190,32 @@ onUnmounted(() => {
   background-size: 200% auto;
   mix-blend-mode: screen;
 
-  /* Wszystkie punkty skrajne (0% i 100%) są idealnie zduplikowane,
-    a chmury środkowe wygasają całkowicie, zanim dotkną krawędzi powtórzenia.
-  */
   background-image:
-    /* Chmura na lewej krawędzi (0%) */
     radial-gradient(
       circle at 0% 85%,
       rgba(255, 255, 255, 0.08) 0%,
       transparent 40%
     ),
-    /* Klon chmury na prawej krawędzi (100%) zapewniający płynne zapętlenie */
     radial-gradient(
-        circle at 100% 85%,
-        rgba(255, 255, 255, 0.08) 0%,
-        transparent 40%
-      ),
-    /* Chmura klanowa w centrum (50%) - bezpieczny promień 35% (nie tyka 0% ani 100%) */
+      circle at 100% 85%,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 40%
+    ),
     radial-gradient(
-        circle at 50% 35%,
-        rgba($primaryColor, 0.05) 0%,
-        transparent 35%
-      ),
-    /* Bezpieczna chmura po lewej stronie (szerokość 30%, promień 25%) */
+      circle at 50% 35%,
+      rgba($primaryColor, 0.05) 0%,
+      transparent 35%
+    ),
     radial-gradient(
-        circle at 30% 65%,
-        rgba(255, 255, 255, 0.06) 0%,
-        transparent 25%
-      ),
-    /* Bezpieczna chmura po prawej stronie (szerokość 70%, promień 25%) */
+      circle at 30% 65%,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 25%
+    ),
     radial-gradient(
-        circle at 70% 50%,
-        rgba($redColor, 0.04) 0%,
-        transparent 25%
-      );
+      circle at 70% 50%,
+      rgba($redColor, 0.04) 0%,
+      transparent 25%
+    );
 
   &--layer1 {
     z-index: 2;
@@ -349,7 +341,12 @@ onUnmounted(() => {
 
   @media (max-width: 640px) {
     width: 100%;
-    max-width: 320px;
+    max-width: 250px;
+    min-width: 0;
+    padding: 10px 14px;
+    gap: 10px;
+    font-size: 0.95rem;
+    border-radius: 7px;
   }
 
   &::before {
@@ -362,7 +359,7 @@ onUnmounted(() => {
     background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.25) 50%,
       rgba(255, 255, 255, 0) 100%
     );
     transform: skewX(-25deg);
@@ -371,10 +368,17 @@ onUnmounted(() => {
   &__icon {
     display: flex;
     align-items: center;
-    width: 26px;
-    height: 26px;
-    font-size: 1.4rem;
+    width: 28px; /* Podbito z 26px dla doskonałych proporcji na desktopie */
+    height: 28px;
+    font-size: 1.5rem;
     transition: transform 0.3s ease;
+    flex-shrink: 0; /* 🎯 Zabezpieczenie z headera: blokuje kurczenie się ikony */
+
+    @media (max-width: 640px) {
+      width: 20px;
+      height: 20px;
+      font-size: 1.15rem;
+    }
   }
 
   &__text {
@@ -404,9 +408,6 @@ onUnmounted(() => {
       transform: translateY(-4px) scale(1.02);
       box-shadow: 0 0 40px rgba(88, 101, 242, 0.8);
       background: linear-gradient(135deg, #6773f3 0%, #4e5af5 100%);
-      .btn-action__icon {
-        transform: scale(1.2);
-      }
       .wave {
         animation: shockwave 1.2s infinite ease-out !important;
       }
@@ -425,12 +426,15 @@ onUnmounted(() => {
       transform: translateY(-4px) scale(1.02);
       box-shadow: 0 0 40px rgba($primaryColor, 0.8);
       border-color: $hoverColor;
-      .btn-action__icon {
-        transform: scale(1.2);
-      }
       &::before {
         animation: flarePass 1.5s infinite linear !important;
       }
+    }
+  }
+
+  &:hover {
+    .btn-action__icon {
+      transform: scale(1.2);
     }
   }
 }

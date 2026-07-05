@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 
 const isMobileMenuOpen = ref(false);
 const isSticky = ref(false);
@@ -12,32 +12,78 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
 
-// Pancerna funkcja oparta o wysokość okna (viewportu)
 const handleScroll = () => {
-  // Punktem przyklejenia jest wysokość całego ekranu minus 80px navbaru
-  const triggerPoint = window.innerHeight - 80;
-
-  isSticky.value = window.scrollY >= triggerPoint;
+  if (window.innerWidth <= 768) {
+    isSticky.value = true;
+  } else {
+    const triggerPoint = window.innerHeight - 80;
+    isSticky.value = window.scrollY >= triggerPoint;
+  }
 };
+
+watch(isMobileMenuOpen, (isOpen) => {
+  document.body.style.overflow = isOpen ? "hidden" : "";
+});
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  window.addEventListener("resize", handleScroll); // Na wypadek zmiany rozmiaru okna
-  handleScroll(); // Wywołanie na start
+  window.addEventListener("resize", handleScroll);
+  handleScroll();
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
   window.removeEventListener("resize", handleScroll);
+  document.body.style.overflow = "";
 });
 </script>
 
 <template>
   <header :class="['main-navbar', { 'main-navbar--sticky': isSticky }]">
     <div class="main-navbar__container container">
+      <!-- 🎯 Oczyszczona struktura brandingu bez zbędnych tagów span -->
       <a href="#" class="main-navbar__brand" @click="closeMobileMenu">
-        <span class="brand-title">Polska Husaria</span>
-        <span class="brand-slogan">Husaria doda ci skrzydeł</span>
+        <svg
+          class="husaria-wing husaria-wing--left"
+          viewBox="0 0 70 100"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <!-- Zmieniono ID na unikalne dla nawigacji, by uniknąć konfliktów z Hero -->
+            <linearGradient
+              id="husariaGradNav"
+              x1="100%"
+              y1="100%"
+              x2="0%"
+              y2="0%"
+            >
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="45%" stop-color="#ffffff" />
+              <stop offset="80%" stop-color="#e63946" />
+              <stop offset="100%" stop-color="#b81414" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M65,95 L62,75 C59,60 53,45 42,30 C32,16 18,5 2,2 C12,10 24,20 32,32 C18,25 8,22 1,24 C13,32 25,41 34,51 C24,46 14,44 6,47 C17,54 28,63 36,72 C28,69 20,68 13,70 C24,76 36,82 46,87 C41,86 33,85 27,87 C38,91 52,94 65,95 Z"
+            fill="url(#husariaGradNav)"
+          />
+        </svg>
+
+        <div class="brand-content">
+          <span class="brand-title">Polska Husaria</span>
+          <span class="brand-slogan">Husaria doda ci skrzydeł</span>
+        </div>
+
+        <svg
+          class="husaria-wing husaria-wing--right"
+          viewBox="0 0 70 100"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M65,95 L62,75 C59,60 53,45 42,30 C32,16 18,5 2,2 C12,10 24,20 32,32 C18,25 8,22 1,24 C13,32 25,41 34,51 C24,46 14,44 6,47 C17,54 28,63 36,72 C28,69 20,68 13,70 C24,76 36,82 46,87 C41,86 33,85 27,87 C38,91 52,94 65,95 Z"
+            fill="url(#husariaGradNav)"
+          />
+        </svg>
       </a>
 
       <button
@@ -103,12 +149,19 @@ onUnmounted(() => {
         </nav>
       </transition>
     </div>
+
+    <transition name="fade">
+      <div
+        v-if="isMobileMenuOpen"
+        class="main-navbar__overlay"
+        @click="closeMobileMenu"
+      ></div>
+    </transition>
   </header>
 </template>
 
 <style lang="scss" scoped>
 .main-navbar {
-  // CSS-owe zachowanie sticky działa automatycznie, gdy minie sekcję Header
   position: sticky;
   top: 0;
   left: 0;
@@ -119,13 +172,8 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 
-  // ==========================================
-  // 🔘 STAN STARTOWY (Dno headera - efekty ON TOP)
-  // ==========================================
   border-top: 1px solid rgba($primaryColor, 0.4);
   border-bottom: 1px solid transparent;
-
-  // Cień rzucany w górę (ujemny Y) rozświetla dół Headera
   box-shadow: 0 -6px 20px rgba($primaryColor, 0.12);
 
   transition:
@@ -133,17 +181,13 @@ onUnmounted(() => {
     border-color 0.3s ease,
     box-shadow 0.3s ease;
 
-  // ==========================================
-  // ⚡ STAN STICKY (Góra okna - efekty ON BOTTOM)
-  // ==========================================
   &--sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
     background: rgba(3, 3, 3, 0.95);
-
-    // Odwrócenie linii granicznej na dół
     border-top: 1px solid transparent;
     border-bottom: 1px solid $primaryColor;
-
-    // Odwrócenie poświaty w dół (dodatni Y) nad nadchodzącą treść
     box-shadow: 0 6px 25px rgba($primaryColor, 0.25);
   }
 
@@ -152,13 +196,21 @@ onUnmounted(() => {
     align-items: center;
     justify-content: space-between;
     height: 100%;
+    position: relative;
+    z-index: 10;
   }
 
   &__brand {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
     user-select: none;
+
+    .brand-content {
+      display: flex;
+      flex-direction: column;
+    }
 
     .brand-title {
       font-family: $headerFont;
@@ -177,9 +229,17 @@ onUnmounted(() => {
       opacity: 0.85;
     }
 
+    // 🎯 Jedno, zintegrowane zarządzanie animacją skrzydeł bez konfliktów klas
     &:hover {
       .brand-title {
         color: $primaryColor;
+      }
+      .husaria-wing {
+        transform: translateY(-3px);
+
+        &--right {
+          transform: scaleX(-1) translateY(-3px); /* Zachowuje lustrzane odbicie podczas unoszenia */
+        }
       }
     }
   }
@@ -188,11 +248,20 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
   }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1;
+  }
 }
 
-// ==========================================
-// LISTA LINKÓW (DESKTOP)
-// ==========================================
 .nav-list {
   display: flex;
   align-items: center;
@@ -224,9 +293,23 @@ onUnmounted(() => {
   }
 }
 
-// ==========================================
-// DROPDOWN MOBILNY (DRAWER)
-// ==========================================
+// 🎯 Zoptymalizowana klasa bazowa dla skrzydeł w nawigacji
+.husaria-wing {
+  display: block;
+  width: clamp(24px, 5vw, 42px);
+  height: clamp(24px, 5vw, 42px);
+  filter: drop-shadow(0 0 6px rgba($primaryColor, 0.5));
+  opacity: 0.95;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform;
+
+  &--right {
+    transform: scaleX(
+      -1
+    ); /* Tylko jedno, nadrzędne i pewne odbicie lustrzane */
+  }
+}
+
 .main-navbar__mobile-drawer {
   position: absolute;
   top: 100%;
@@ -236,6 +319,7 @@ onUnmounted(() => {
   border-bottom: 2px solid $primaryColor;
   padding: 30px 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  z-index: 5;
 
   .mobile-nav-list {
     display: flex;
@@ -267,9 +351,6 @@ onUnmounted(() => {
   }
 }
 
-// ==========================================
-// 🍔 HAMBURGER MOBILNY
-// ==========================================
 .hamburger {
   display: none;
   background: none;
@@ -334,9 +415,6 @@ onUnmounted(() => {
   }
 }
 
-// ==========================================
-// ANIMACJE MOBILNE (CamelCase)
-// ==========================================
 .navMobileSlide-enter-active,
 .navMobileSlide-leave-active {
   transition:
@@ -350,10 +428,23 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-// ==========================================
-// RESPONSYWNOŚĆ (RWD)
-// ==========================================
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.35s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 768px) {
+  .main-navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+  }
+
   .main-navbar__nav {
     display: none;
   }

@@ -21,13 +21,11 @@ const scrollProgress = ref(0);
 
 const handleScroll = () => {
   const scrollTop = window.scrollY;
-  // Obliczamy postęp na podstawie wysokości okna (czyli pełnej wysokości nagłówka 100vh)
   const headerHeight = window.innerHeight || 800;
   scrollProgress.value = Math.min(scrollTop / headerHeight, 1);
 };
 
 onMounted(() => {
-  // Nasłuchiwanie scrolla do dynamicznego przyciemniania
   window.addEventListener("scroll", handleScroll);
 
   setTimeout(() => {
@@ -40,7 +38,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Czyszczenie pamięci po demontażu komponentu
   window.removeEventListener("scroll", handleScroll);
 });
 </script>
@@ -49,15 +46,14 @@ onUnmounted(() => {
   <header class="hero-header" :style="{ '--scroll-progress': scrollProgress }">
     <div class="hero-header__bg"></div>
     <div class="hero-header__overlay"></div>
-
     <div class="hero-header__darkener"></div>
 
     <div class="fireflies">
-      <div v-for="n in 100" :key="n" class="firefly"></div>
+      <div v-for="n in 40" :key="n" class="firefly"></div>
     </div>
 
     <div class="hero-header__content container">
-      <div class="hero-header__badge-wrapper anim--fade-in-top">
+      <div class="hero-header__badge-wrapper anim--fadeInTop">
         <svg
           class="husaria-wing husaria-wing--left"
           viewBox="0 0 70 100"
@@ -98,7 +94,7 @@ onUnmounted(() => {
       </div>
 
       <h1
-        class="hero-header__title anim--fade-in-title"
+        class="hero-header__title anim--fadeInTitle"
         data-text="Polska Husaria"
       >
         Polska Husaria
@@ -110,7 +106,7 @@ onUnmounted(() => {
           :class="[
             'hero-header__subtitle',
             animationClasses[currentLineIndex],
-            { 'anim--intro-subtitle': isIntro },
+            { 'anim--introSubtitle': isIntro },
           ]"
         >
           {{ lines[currentLineIndex] }}
@@ -121,7 +117,7 @@ onUnmounted(() => {
         <a
           href="https://discord.gg/4ZYAdMEK"
           target="_blank"
-          class="btn-action btn-action--discord anim--pulse-discord anim--btn-in-left"
+          class="btn-action btn-action--discord anim--pulseDiscord anim--btnInLeft"
         >
           <div class="btn-action__waves"><span class="wave"></span></div>
           <span class="btn-action__icon">
@@ -138,7 +134,7 @@ onUnmounted(() => {
         <a
           href="https://link.clashofclans.com/en?action=OpenClanProfile&tag=2YRL8C2Q2"
           target="_blank"
-          class="btn-action btn-action--game anim--pulse-game anim--btn-in-right"
+          class="btn-action btn-action--game anim--pulseGame anim--btnInRight"
         >
           <span class="btn-action__icon">⚔️</span>
           <span class="btn-action__text">Dołącz w Klanie!</span>
@@ -153,9 +149,10 @@ onUnmounted(() => {
 
 .hero-header {
   position: relative;
-  height: calc(
-    100vh - 80px
-  ); /* ⚔️ Usunięto min-height: 100vh, teraz sztywno trzyma idealny wymiar pod navbar */
+  min-height: calc(
+    100dvh - 80px
+  ); /* Elastyczna wysokość chroniąca przed overflowem */
+  height: auto;
   width: 100%;
   display: flex;
   align-items: center;
@@ -164,6 +161,7 @@ onUnmounted(() => {
   overflow: hidden;
   border-bottom: 3px solid $primaryColor;
   clip-path: inset(0);
+  padding: clamp(30px, 6vh, 60px) 0; /* Zmniejszony padding pionowy na małych ekranach */
 
   &__bg {
     position: fixed;
@@ -201,48 +199,70 @@ onUnmounted(() => {
   &__content {
     position: relative;
     z-index: 3;
-    max-width: 950px;
-    padding: 40px 20px;
+    max-width: 900px;
+    padding: 0 16px; /* Zwężone marginesy boczne kontenera dla zyskania przestrzeni */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   &__badge-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 12px; /* Zmniejszone odstępy skrzydeł */
+    margin-bottom: clamp(12px, 3vh, 24px);
   }
 
   .husaria-wing {
     display: block;
-    width: 52px;
-    height: 52px;
-    filter: drop-shadow(0 0 8px rgba($primaryColor, 0.6));
+    width: clamp(
+      24px,
+      5vw,
+      46px
+    ); /* Bezpieczniejsze, bardziej kompaktowe skrzydła */
+    height: clamp(24px, 5vw, 46px);
+    filter: drop-shadow(0 0 6px rgba($primaryColor, 0.5));
     opacity: 0.95;
 
     &--right {
       transform: scaleX(-1);
     }
   }
+
   &__badge {
     font-family: $headerFont;
     color: $hoverColor;
-    font-size: 1.2rem;
+    font-size: clamp(
+      0.8rem,
+      2.2vw,
+      1.1rem
+    ); /* Delikatnie zmniejszony tekst badge */
     font-weight: bold;
-    letter-spacing: 4px;
+    letter-spacing: clamp(1px, 0.4vw, 3px);
     text-transform: uppercase;
-    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
   }
 
   &__title {
     font-family: $headerFont;
-    font-size: 6rem;
-    margin: 0 auto 42px auto;
+    font-size: clamp(
+      2rem,
+      7vw,
+      5.2rem
+    ); /* 🎯 Skorygowany dół i góra – tekst nie rozepchnie ekranu */
+    margin: 0 auto clamp(20px, 4vh, 36px) auto;
     font-weight: 900;
     text-transform: uppercase;
     position: relative;
     color: #e6e2de;
-    white-space: nowrap;
-    width: max-content;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+
+    @media (max-width: 768px) {
+      line-height: 1.15;
+    }
 
     &::after {
       content: attr(data-text);
@@ -268,38 +288,49 @@ onUnmounted(() => {
   }
 
   &__subtitle {
-    font-size: 1.4rem;
-    line-height: 1.8;
+    font-size: clamp(
+      0.95rem,
+      2.6vw,
+      1.3rem
+    ); /* Kompaktowy, czytelny podtytuł */
+    line-height: 1.6;
     color: #e6e2de;
-    margin-bottom: 60px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    margin-bottom: clamp(30px, 5vh, 50px);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
     font-weight: 400;
     display: inline-block;
     width: 100%;
-    min-height: 5rem;
+    max-width: 750px;
+    min-height: clamp(
+      3.8rem,
+      8vw,
+      4.8rem
+    ); /* Obniżony min-height zapobiega pustej przestrzeni */
     will-change: transform, opacity;
   }
 
   &__actions {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     justify-content: center;
     width: 100%;
-    max-width: 640px;
+    max-width: 600px;
     margin: 0 auto;
 
+    /* Zsynchronizowano breakpoint z Join.vue (640px) */
     @media (max-width: 640px) {
       flex-direction: column;
       align-items: center;
+      gap: 12px;
       padding: 0 10px;
     }
   }
 }
 
 // ==========================================
-// ANIMACJE INTRO (STAGGERED DELAY)
+// ANIMACJE INTRO (Ujednolicone CamelCase)
 // ==========================================
-.anim--fade-in-title {
+.anim--fadeInTitle {
   opacity: 0;
   filter: blur(15px);
   animation:
@@ -308,7 +339,7 @@ onUnmounted(() => {
   animation-delay: 0s, 1.5s;
 }
 
-.anim--fade-in-top {
+.anim--fadeInTop {
   opacity: 0;
   filter: blur(10px);
   animation:
@@ -317,78 +348,90 @@ onUnmounted(() => {
   animation-delay: 1s, 2.2s;
 }
 
-.anim--intro-subtitle {
+.anim--introSubtitle {
   animation-delay: 2s !important;
 }
 
-.anim--btn-in-left {
+.anim--btnInLeft {
   opacity: 0;
-  transform: translateX(-50px);
+  transform: translateX(-40px);
   filter: blur(10px);
   animation: introArrivalLeft 1.2s cubic-bezier(0.19, 1, 0.22, 1) both;
   animation-delay: 3s;
+
+  /* Zsynchronizowano breakpoint z Join.vue (640px) */
+  @media (max-width: 640px) {
+    transform: translateY(
+      20px
+    ); /* Na mobile przyjeżdża z dołu zamiast z boku – stabilniejsze wizualnie */
+  }
 }
 
-.anim--btn-in-right {
+.anim--btnInRight {
   opacity: 0;
-  transform: translateX(50px);
+  transform: translateX(40px);
   filter: blur(10px);
   animation: introArrivalRight 1.2s cubic-bezier(0.19, 1, 0.22, 1) both;
   animation-delay: 3s;
+
+  /* Zsynchronizowano breakpoint z Join.vue (640px) */
+  @media (max-width: 640px) {
+    transform: translateY(20px);
+  }
 }
 
 // ==========================================
 // KARUZELA OPISÓW
 // ==========================================
 .lineFade-leave-active {
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
 }
 .lineFade-leave-to {
   opacity: 0;
 }
 
 .anim--fadeInUp {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .anim--fadeInLeft {
-  animation: fadeInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .anim--fadeInRight {
-  animation: fadeInRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 // ==========================================
-// KEYFRAMES
+// KEYFRAMES (CamelCase)
 // ==========================================
 @keyframes subtleZoom {
   0% {
-    transform: scale(1.03) translateY(0);
+    transform: scale(1.02) translateY(0);
   }
   100% {
-    transform: scale(1.09) translateY(-5px);
+    transform: scale(1.07) translateY(-4px);
   }
 }
 
 @keyframes introTitle {
   0% {
     opacity: 0;
-    transform: translateY(20px) scale(0.97);
-    filter: blur(15px);
-    letter-spacing: 14px;
+    transform: translateY(15px) scale(0.98);
+    filter: blur(12px);
+    letter-spacing: 10px;
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
-    letter-spacing: 4px;
+    letter-spacing: normal;
   }
 }
 
 @keyframes introBadge {
   0% {
     opacity: 0;
-    transform: translateY(-40px);
-    filter: blur(10px);
+    transform: translateY(-30px);
+    filter: blur(8px);
   }
   100% {
     opacity: 1;
@@ -400,8 +443,8 @@ onUnmounted(() => {
 @keyframes introArrivalLeft {
   0% {
     opacity: 0;
-    transform: translateX(-50px);
-    filter: blur(10px);
+    transform: translateX(-40px);
+    filter: blur(8px);
   }
   100% {
     opacity: 1;
@@ -413,8 +456,8 @@ onUnmounted(() => {
 @keyframes introArrivalRight {
   0% {
     opacity: 0;
-    transform: translateX(50px);
-    filter: blur(10px);
+    transform: translateX(40px);
+    filter: blur(8px);
   }
   100% {
     opacity: 1;
@@ -426,7 +469,7 @@ onUnmounted(() => {
 @keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   100% {
     opacity: 1;
@@ -436,7 +479,7 @@ onUnmounted(() => {
 @keyframes fadeInLeft {
   0% {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-20px);
   }
   100% {
     opacity: 1;
@@ -446,7 +489,7 @@ onUnmounted(() => {
 @keyframes fadeInRight {
   0% {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(20px);
   }
   100% {
     opacity: 1;
@@ -459,7 +502,7 @@ onUnmounted(() => {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
@@ -469,17 +512,15 @@ onUnmounted(() => {
     text-shadow:
       0 1px 0 #d4a359,
       0 2px 0 #b8863b,
-      0 3px 0 #9c6c23,
-      0 6px 12px rgba(0, 0, 0, 0.9),
-      0 0 20px rgba($redColor, 0.5);
+      0 4px 8px rgba(0, 0, 0, 0.9),
+      0 0 15px rgba($redColor, 0.4);
   }
   50% {
     text-shadow:
       0 1px 0 #d4a359,
       0 2px 0 #b8863b,
-      0 3px 0 #9c6c23,
-      0 10px 18px rgba(0, 0, 0, 0.9),
-      0 0 30px rgba($primaryColor, 0.8);
+      0 7px 14px rgba(0, 0, 0, 0.9),
+      0 0 25px rgba($primaryColor, 0.7);
   }
 }
 
@@ -503,23 +544,35 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  flex: 1;
-  min-width: 280px;
-  max-width: 300px;
+  gap: 12px;
+  width: 100%;
+  max-width: 275px; /* Bezpieczna szerokość maksymalna na desktopie */
   color: #ffffff;
   font-family: $headerFont;
-  font-size: 1.2rem;
+  font-size: clamp(
+    0.95rem,
+    2.5vw,
+    1.1rem
+  ); /* Delikatnie obniżona wielkość fontu */
   font-weight: bold;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 18px 20px;
+  padding: 14px 18px; /* Odchudzone paddingi dające świetny, kompaktowy wygląd gry */
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 5;
   will-change: transform, opacity;
+
+  /* 🎯 Zsynchronizowano z Join.vue – przyciski stają się mniejsze i zgrabniejsze */
+  @media (max-width: 640px) {
+    max-width: 250px;
+    padding: 10px 14px;
+    gap: 10px;
+    font-size: 0.95rem; /* Nadpisanie clamp na rzecz stałej, mniejszej wartości */
+    border-radius: 7px;
+  }
 
   &::before {
     content: "";
@@ -531,7 +584,7 @@ onUnmounted(() => {
     background: linear-gradient(
       90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.25) 50%,
       rgba(255, 255, 255, 0) 100%
     );
     transform: skewX(-25deg);
@@ -540,14 +593,21 @@ onUnmounted(() => {
   &__icon {
     display: flex;
     align-items: center;
-    width: 26px;
-    height: 26px;
-    font-size: 1.4rem;
+    width: 22px;
+    height: 22px;
+    font-size: 1.25rem;
     transition: transform 0.3s ease;
     flex-shrink: 0;
+
+    /* Dopasowanie rozmiaru ikonki dokładnie jak w Join.vue */
+    @media (max-width: 640px) {
+      width: 20px;
+      height: 20px;
+      font-size: 1.15rem;
+    }
   }
   &__text {
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;
   }
@@ -555,7 +615,7 @@ onUnmounted(() => {
   &--discord {
     background: linear-gradient(135deg, #5865f2 0%, #404eed 100%);
     border: 2px solid #727eff;
-    box-shadow: 0 0 25px rgba(88, 101, 242, 0.4);
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.35);
 
     .btn-action__waves {
       position: absolute;
@@ -568,7 +628,7 @@ onUnmounted(() => {
         left: 50%;
         width: 100%;
         height: 100%;
-        background: rgba(88, 101, 242, 0.4);
+        background: rgba(88, 101, 242, 0.35);
         border-radius: 8px;
         transform: translate(-50%, -50%) scale(1);
         opacity: 0;
@@ -576,7 +636,7 @@ onUnmounted(() => {
     }
 
     &:hover {
-      box-shadow: 0 0 40px rgba(88, 101, 242, 0.8);
+      box-shadow: 0 0 35px rgba(88, 101, 242, 0.7);
       background: linear-gradient(135deg, #6773f3 0%, #4e5af5 100%);
       .wave {
         animation: shockwave 1.2s infinite ease-out !important;
@@ -590,10 +650,10 @@ onUnmounted(() => {
   &--game {
     background: linear-gradient(180deg, $redColor 0%, #630a0a 100%);
     border: 2px solid $primaryColor;
-    box-shadow: 0 0 25px rgba($redColor, 0.5);
+    box-shadow: 0 0 20px rgba($redColor, 0.4);
 
     &:hover {
-      box-shadow: 0 0 40px rgba($primaryColor, 0.8);
+      box-shadow: 0 0 35px rgba($primaryColor, 0.7);
       border-color: $hoverColor;
       &::before {
         animation: flarePass 1.5s infinite linear !important;
@@ -602,20 +662,14 @@ onUnmounted(() => {
   }
 
   &:hover {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-3px) scale(1.015);
     .btn-action__icon {
-      transform: scale(1.2);
+      transform: scale(1.15);
     }
-  }
-
-  @media (max-width: 640px) {
-    width: 100%;
-    max-width: 320px;
-    flex: none;
   }
 }
 
-.anim--pulse-discord {
+.anim--pulseDiscord {
   &::before {
     animation: autoFlare 5s infinite linear 4.5s;
   }
@@ -623,13 +677,13 @@ onUnmounted(() => {
     animation: autoShockwave 5s infinite ease-out 4.5s;
   }
 }
-.anim--pulse-game {
+.anim--pulseGame {
   &::before {
     animation: autoFlare 5s infinite linear 7s;
   }
 }
 .btn-action:hover {
-  &.anim--pulse-discord .btn-action__waves .wave {
+  &.anim--pulseDiscord .btn-action__waves .wave {
     animation: none;
   }
   &::before {
@@ -645,10 +699,10 @@ onUnmounted(() => {
     opacity: 0;
   }
   20% {
-    opacity: 0.6;
+    opacity: 0.5;
   }
   40% {
-    transform: translate(-50%, -50%) scale(1.3, 1.5);
+    transform: translate(-50%, -50%) scale(1.2, 1.4);
     opacity: 0;
   }
 }
@@ -674,15 +728,15 @@ onUnmounted(() => {
 @keyframes shockwave {
   0% {
     transform: translate(-50%, -50%) scale(1);
-    opacity: 0.8;
+    opacity: 0.7;
   }
   100% {
-    transform: translate(-50%, -50%) scale(1.5, 1.7);
+    transform: translate(-50%, -50%) scale(1.4, 1.6);
   }
 }
 
 // ==========================================
-// SYSTEM ISKIER (FIREFLIES)
+// SYSTEM ISKIER (Zoptymalizowany pod mobile)
 // ==========================================
 .fireflies {
   position: absolute;
@@ -692,18 +746,18 @@ onUnmounted(() => {
 }
 .firefly {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   opacity: 0;
   bottom: -10px;
-  @for $i from 1 through 100 {
+  @for $i from 1 through 40 {
     &:nth-child(#{$i}) {
       left: math.random(100) * 1%;
       animation: riseParticles #{math.random(6) + 4}s infinite linear;
       animation-delay: #{math.random(5)}s;
-      width: #{math.random(5) + 3}px;
-      height: #{math.random(5) + 3}px;
+      width: #{math.random(4) + 3}px;
+      height: #{math.random(4) + 3}px;
       $particleColor: $redColor;
       @if $i % 2 == 0 {
         $particleColor: $primaryColor;
@@ -724,81 +778,15 @@ onUnmounted(() => {
     opacity: 0;
   }
   20% {
-    opacity: 0.9;
+    opacity: 0.85;
   }
   80% {
-    opacity: 0.4;
+    opacity: 0.35;
   }
   100% {
     bottom: 110%;
-    transform: translateX(#{math.random(120) - 60}px) scale(0.1);
+    transform: translateX(#{math.random(100) - 50}px) scale(0.1);
     opacity: 0;
-  }
-}
-
-// ==========================================
-// RESPONSYWNOŚĆ (RWD)
-// ==========================================
-@media (max-width: 768px) {
-  .hero-header {
-    height: calc(
-      100vh - 80px
-    ); /* Gwarancja zachowania wymiaru na tabletach/telefonach */
-    &__title {
-      font-size: 3.2rem;
-      margin-bottom: 25px;
-    }
-    &__subtitle {
-      font-size: 1.1rem;
-      margin-bottom: 35px;
-      min-height: 7.5rem;
-    }
-    &__actions {
-      gap: 15px;
-    }
-    &__badge-wrapper {
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-  }
-  .husaria-wing {
-    width: 28px;
-    height: 28px;
-  }
-  .hero-header__badge {
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-  }
-  .anim--btn-in-left {
-    transform: translateX(-25px);
-  }
-  .anim--btn-in-right {
-    transform: translateX(25px);
-  }
-
-  @keyframes introArrivalLeft {
-    0% {
-      opacity: 0;
-      transform: translateX(-25px);
-      filter: blur(5px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-      filter: blur(0);
-    }
-  }
-  @keyframes introArrivalRight {
-    0% {
-      opacity: 0;
-      transform: translateX(25px);
-      filter: blur(5px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-      filter: blur(0);
-    }
   }
 }
 </style>

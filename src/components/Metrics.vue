@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 
 const mainTitle = ref(null);
+const metricsCard = ref(null);
 
 onMounted(() => {
   const observerOptions = {
@@ -12,110 +13,117 @@ onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("isVisible"); // Konwencja CamelCase zachowana
+        entry.target.classList.add("isVisible");
       } else {
-        entry.target.classList.remove("isVisible");
+        if (window.innerWidth > 992) {
+          entry.target.classList.remove("isVisible");
+        }
       }
     });
   }, observerOptions);
 
   if (mainTitle.value) observer.observe(mainTitle.value);
+  if (metricsCard.value) observer.observe(metricsCard.value);
 });
 </script>
 
 <template>
-  <section class="metrics-placeholder container">
-    <h2 ref="mainTitle" class="metrics-placeholder__main-title">Metryki</h2>
+  <section class="metrics-section">
+    <div class="container">
+      <h2 ref="mainTitle" class="metrics-section__main-title">Metryki</h2>
 
-    <div class="metrics-card">
-      <div class="metrics-card__icon">📊</div>
+      <div ref="metricsCard" class="metrics-card">
+        <div class="metrics-card__icon">📊</div>
 
-      <h3 class="metrics-card__status">Już wkrótce...</h3>
+        <h3 class="metrics-card__status">Już wkrótce...</h3>
 
-      <div class="metrics-card__progress-bar">
-        <div class="bar-fill"></div>
+        <div class="metrics-card__progress-bar">
+          <div class="bar-fill"></div>
+        </div>
+
+        <p class="metrics-card__description">
+          Trwają prace nad wdrożeniem autorskiego systemu synchronizacji danych.
+          Wkrótce zyskasz wgląd w aktualne poziomy klanów, historię wygranych i
+          inne statystyki.
+        </p>
       </div>
-
-      <p class="metrics-card__description">
-        Trwają prace nad wdrożeniem autorskiego systemu synchronizacji danych.
-        Wkrótce zyskasz wgląd w aktualne poziomy klanów, historię wygranych
-        wojen oraz szczegółowe statystyki aktywności członków.
-      </p>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-.metrics-placeholder {
-  padding: 100px 20px;
-  display: flex;
-  flex-direction: column;
+.metrics-section {
+  padding: 120px 0;
 
   &__main-title {
     font-family: $headerFont;
     color: #e6e2de;
-    font-size: 3rem;
+    font-size: clamp(2.2rem, 5vw, 3rem);
     text-transform: uppercase;
     letter-spacing: 4px;
     margin-bottom: 60px;
     position: relative;
 
-    /* Wyrównanie do lewej krawędzi */
+    // Desktop: Lewa strona
     text-align: left;
-    margin-left: 0;
-    margin-right: auto;
     width: fit-content;
 
-    /* Animacja: wysuwanie się z prawej strony (z dodatniego X do zera) */
     opacity: 0;
-    transform: translateX(50px);
-    will-change: transform, opacity;
-    transition:
-      transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 0.9s ease;
+    transform: translateX(-40px);
+    transition: all 1s ease-out;
 
     &::after {
       content: "";
       position: absolute;
       bottom: -15px;
-      left: 0; /* Pasek startuje od lewej krawędzi */
+      left: 0;
       width: 0;
       height: 3px;
       background-color: $primaryColor;
-      transition: width 2s ease-in-out;
-      will-change: width;
+      transition: width 1.5s ease-in-out;
     }
 
     &.isVisible {
       opacity: 1;
       transform: translateX(0);
-
       &::after {
-        width: 80%; /* Pasek płynnie rozwija się w prawą stronę */
+        width: 100%; /* 🎯 Zmieniono z 120px na 100% – teraz linia idealnie pokrywa cały tekst */
       }
     }
   }
 }
 
-/* Układ wewnętrzny karty */
 .metrics-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 650px;
+  background-color: $backgroundColor;
+  border: $borderGame;
+  border-radius: 6px;
+  padding: 40px;
+  box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.56);
+  max-width: 800px;
   margin: 0 auto;
-  width: 100%;
+  text-align: center;
+
+  opacity: 0;
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+
+  // Desktop: subtelne wejście
+  transform: translateY(20px);
+
+  &.isVisible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   &__icon {
-    font-size: 3.5rem;
-    margin-bottom: 15px;
+    font-size: 3rem;
+    margin-bottom: 20px;
   }
 
   &__status {
-    font-family: $headerFont;
     color: $primaryColor;
-    font-size: 2rem;
+    font-family: $headerFont;
+    font-size: 1.8rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin: 0 0 25px 0;
@@ -151,42 +159,43 @@ onMounted(() => {
   }
 
   &__description {
-    color: #b0a8a0;
+    color: $fontColor;
     font-size: 1.1rem;
     line-height: 1.6;
-    margin: 0;
   }
 }
 
 @keyframes progressShimmy {
-  0% {
+  from {
     background-position: 0 0;
   }
-  100% {
+  to {
     background-position: 30px 0;
   }
 }
 
+// 📱 RWD / MOBILNE DOSTOSOWANIE
 @media (max-width: 992px) {
-  .metrics-placeholder {
-    padding: 60px 20px;
+  .metrics-section__main-title {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(30px);
 
-    &__main-title {
-      font-size: 2.2rem;
-      margin-bottom: 40px;
-      transform: translateX(
-        25px
-      ); /* Delikatniejszy ruch na mniejszych ekranach */
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &.isVisible {
+      transform: translateY(0);
     }
   }
 
   .metrics-card {
-    &__status {
-      font-size: 1.6rem;
-    }
+    transform: translateY(60px) !important;
 
-    &__description {
-      font-size: 1rem;
+    &.isVisible {
+      transform: translateY(0) !important;
     }
   }
 }

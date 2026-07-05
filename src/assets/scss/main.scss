@@ -1,5 +1,14 @@
 @import "variables";
-
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
   padding: 0;
@@ -7,6 +16,10 @@ body {
   color: $fontColor;
   font-family: "Segoe UI", Roboto, sans-serif;
   background-image: radial-gradient(circle at center, #1f1610 0%, #0d0d0d 100%);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 /* ==========================================================================
    🔥 PERSONALIZACJA SCROLLBARA (Styl Gamingowy / Premium)
@@ -19,6 +32,10 @@ html {
   scroll-behavior: smooth;
   // Opcjonalnie dodaj margines u góry dla sekcji, aby nawigacja sticky ich nie zasłaniała:
   scroll-padding-top: 80px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 // Wsparcie dla Chrome, Edge, Brave, Safari oraz Opera

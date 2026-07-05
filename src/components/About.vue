@@ -29,7 +29,7 @@ const requirements = [
   },
   {
     label: "Odpowiedzialność",
-    text: "Zgłoszeni uczestnicy zobowiązani są do wykorzystania obu ataków w wojnie.",
+    text: "Zgłoszeni uczestnicy zobowiązani sunt do wykorzystania obu ataków w wojnie.",
   },
   {
     label: "Komunikacja",
@@ -57,7 +57,9 @@ onMounted(() => {
       if (entry.isIntersecting) {
         entry.target.classList.add("isVisible");
       } else {
-        entry.target.classList.remove("isVisible");
+        if (window.innerWidth > 992) {
+          entry.target.classList.remove("isVisible");
+        }
       }
     });
   }, observerOptions);
@@ -81,7 +83,6 @@ onMounted(() => {
               v-for="(offer, idx) in offers"
               :key="idx"
               class="about-card__item about-card__item--column"
-              :style="{ '--item-idx': idx }"
             >
               <strong>🔸 {{ offer.label }}:</strong>
               <span class="desc">{{ offer.text }}</span>
@@ -89,17 +90,13 @@ onMounted(() => {
           </ul>
         </div>
 
-        <div
-          ref="rightCard"
-          class="about-card about-card--alt about-card--right"
-        >
+        <div ref="rightCard" class="about-card about-card--right">
           <h3 class="about-card__title">🛡️ Czego oczekujemy? 🛡️</h3>
           <ul class="about-card__list">
             <li
               v-for="(req, idx) in requirements"
               :key="idx"
               class="about-card__item about-card__item--column"
-              :style="{ '--item-idx': idx }"
             >
               <strong>🔸 {{ req.label }}:</strong>
               <span class="desc">{{ req.text }}</span>
@@ -113,48 +110,39 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .about-section {
-  padding: 100px 0; /* Płynny padding góra/dół (boki kontroluje container) */
+  padding: clamp(60px, 8vh, 100px) 0;
+  overflow-x: hidden;
 
   &__main-title {
     font-family: $headerFont;
     color: #e6e2de;
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
     text-transform: uppercase;
     letter-spacing: 4px;
     margin-bottom: 60px;
     position: relative;
-
-    width: fit-content;
-    margin-right: auto;
     text-align: left;
-
+    width: fit-content;
     opacity: 0;
-    transform: translateX(-80px);
-    will-change: transform, opacity;
-
-    transition:
-      transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 0.9s ease;
+    transform: translateX(-40px);
+    transition: all 1s ease-out;
 
     &::after {
       content: "";
       position: absolute;
       bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
       width: 0;
       height: 3px;
       background-color: $primaryColor;
-      transition: width 2s ease-in-out;
-      will-change: width;
+      transition: width 1.5s ease-in-out;
     }
 
     &.isVisible {
       opacity: 1;
       transform: translateX(0);
-
       &::after {
-        width: 80%;
+        width: 100%; /* 🎯 Poprawiono: z 120px na 100% dla idealnego dopasowania pod tekstem */
       }
     }
   }
@@ -163,8 +151,6 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
-    overflow: hidden;
-    padding: 10px 0;
   }
 }
 
@@ -174,17 +160,12 @@ onMounted(() => {
   border-radius: 6px;
   padding: 40px;
   box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.56);
-
   opacity: 0;
-  will-change: transform, opacity;
-  transition:
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.7s ease;
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
 
   &--left {
     transform: translateX(-100px);
   }
-
   &--right {
     transform: translateX(100px);
   }
@@ -192,15 +173,9 @@ onMounted(() => {
   &.isVisible {
     opacity: 1;
     transform: translateX(0);
-
-    .about-card__item {
-      opacity: 1;
-      transform: translateY(0);
-      transition-delay: calc((var(--item-idx) * 0.12s) + 0.25s);
-    }
   }
 
-  &--alt {
+  &--right {
     border-color: $redColor;
   }
 
@@ -209,14 +184,7 @@ onMounted(() => {
     color: $primaryColor;
     font-size: 1.8rem;
     text-align: center;
-    margin-top: 0;
     margin-bottom: 30px;
-  }
-
-  &__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
   }
 
   &__item {
@@ -225,60 +193,47 @@ onMounted(() => {
     margin-bottom: 22px;
     color: $fontColor;
     display: flex;
+    flex-direction: column;
+    gap: 4px;
 
-    opacity: 0;
-    transform: translateY(30px);
-    will-change: transform, opacity;
-    transition:
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 0.5s ease;
-
-    &:last-child {
-      margin-bottom: 0;
+    strong {
+      color: $primaryColor;
     }
-
-    &--column {
-      flex-direction: column;
-      gap: 4px;
-
-      strong {
-        color: $primaryColor;
-        font-size: 1.15rem;
-        letter-spacing: 0.5px;
-      }
-      .desc {
-        color: #b0a8a0;
-        padding-left: 28px;
-      }
+    .desc {
+      color: #b0a8a0;
+      padding-left: 28px;
     }
   }
 }
 
 @media (max-width: 992px) {
-  .about-section {
-    padding: 60px 0;
+  .about-section__main-title {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(30px);
 
-    &__main-title {
-      font-size: 2.2rem;
-      margin-bottom: 40px;
-      transform: translateX(-40px);
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
     }
-
-    &__grid {
-      grid-template-columns: 1fr;
-      gap: 30px;
+    &.isVisible {
+      transform: translateY(0);
     }
   }
 
+  .about-section__grid {
+    grid-template-columns: 1fr;
+  }
+
   .about-card {
-    &--left {
-      transform: translateX(-40px);
+    transform: translateY(60px) !important;
+
+    &.isVisible {
+      transform: translateY(0) !important;
     }
-    &--right {
-      transform: translateX(40px);
-    }
-    &__item--column .desc {
-      padding-left: 0;
+    &__title {
+      font-size: 1.3rem;
     }
   }
 }

@@ -153,14 +153,16 @@ onUnmounted(() => {
 
 .hero-header {
   position: relative;
-  min-height: 100vh;
+  height: calc(
+    100vh - 80px
+  ); /* ⚔️ Usunięto min-height: 100vh, teraz sztywno trzyma idealny wymiar pod navbar */
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
   border-bottom: 3px solid $primaryColor;
-
   clip-path: inset(0);
 
   &__bg {
@@ -494,24 +496,24 @@ onUnmounted(() => {
 }
 
 // ==========================================
-// PRZYCISKI AKCJI (UJEDNOLICONY I SPÓJNY ROZMIAR)
+// PRZYCISKI AKCJI
 // ==========================================
 .btn-action {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center; /* Wyśrodkowanie zawartości */
+  justify-content: center;
   gap: 15px;
-  flex: 1; /* Równe proporcje na desktopie */
-  min-width: 280px; /* Stała, bezpieczna szerokość minimalna */
-  max-width: 300px; /* Próg rozciągania */
+  flex: 1;
+  min-width: 280px;
+  max-width: 300px;
   color: #ffffff;
   font-family: $headerFont;
   font-size: 1.2rem;
   font-weight: bold;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 18px 20px; /* Zmniejszony padding boczny, by dać przestrzeń tekstom */
+  padding: 18px 20px;
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
@@ -542,12 +544,12 @@ onUnmounted(() => {
     height: 26px;
     font-size: 1.4rem;
     transition: transform 0.3s ease;
-    flex-shrink: 0; /* Zabezpieczenie ikonki przed zgniataniem */
+    flex-shrink: 0;
   }
   &__text {
     letter-spacing: 1px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    white-space: nowrap; /* Absolutna blokada łamania tekstu w ramce */
+    white-space: nowrap;
   }
 
   &--discord {
@@ -609,7 +611,7 @@ onUnmounted(() => {
   @media (max-width: 640px) {
     width: 100%;
     max-width: 320px;
-    flex: none; /* Wyłączenie proporcji flex na rzecz pełnej szerokości */
+    flex: none;
   }
 }
 
@@ -739,11 +741,9 @@ onUnmounted(() => {
 // ==========================================
 @media (max-width: 768px) {
   .hero-header {
-    &__bg,
-    &__overlay,
-    &__darkener {
-      position: absolute;
-    }
+    height: calc(
+      100vh - 80px
+    ); /* Gwarancja zachowania wymiaru na tabletach/telefonach */
     &__title {
       font-size: 3.2rem;
       margin-bottom: 25px;

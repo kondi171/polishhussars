@@ -12,7 +12,7 @@ onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("isVisible"); // Konwencja CamelCase
+        entry.target.classList.add("isVisible"); // Konwencja CamelCase zachowana
       } else {
         entry.target.classList.remove("isVisible");
       }
@@ -24,19 +24,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="metrics-section container">
-    <h2 ref="mainTitle" class="metrics-section__main-title">Metryki</h2>
+  <section class="metrics-placeholder container">
+    <h2 ref="mainTitle" class="metrics-placeholder__main-title">Metryki</h2>
 
-    <div class="metrics-content">
-      <div class="metrics-content__icon">📊</div>
+    <div class="metrics-card">
+      <div class="metrics-card__icon">📊</div>
 
-      <h3 class="metrics-content__status">Już wkrótce...</h3>
+      <h3 class="metrics-card__status">Już wkrótce...</h3>
 
-      <div class="metrics-content__progress-bar">
+      <div class="metrics-card__progress-bar">
         <div class="bar-fill"></div>
       </div>
 
-      <p class="metrics-content__description">
+      <p class="metrics-card__description">
         Trwają prace nad wdrożeniem autorskiego systemu synchronizacji danych.
         Wkrótce zyskasz wgląd w aktualne poziomy klanów, historię wygranych
         wojen oraz szczegółowe statystyki aktywności członków.
@@ -46,7 +46,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.metrics-section {
+.metrics-placeholder {
   padding: 100px 20px;
   display: flex;
   flex-direction: column;
@@ -60,13 +60,15 @@ onMounted(() => {
     margin-bottom: 60px;
     position: relative;
 
-    /* Wyrównanie tytułu do lewej krawędzi kontenera */
-    width: fit-content;
-    margin-right: auto;
+    /* Wyrównanie do lewej krawędzi */
     text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    width: fit-content;
 
+    /* Animacja: wysuwanie się z prawej strony (z dodatniego X do zera) */
     opacity: 0;
-    transform: translateX(-80px);
+    transform: translateX(50px);
     will-change: transform, opacity;
     transition:
       transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
@@ -76,7 +78,7 @@ onMounted(() => {
       content: "";
       position: absolute;
       bottom: -15px;
-      left: 0; /* Linia rośnie od lewej */
+      left: 0; /* Pasek startuje od lewej krawędzi */
       width: 0;
       height: 3px;
       background-color: $primaryColor;
@@ -89,20 +91,20 @@ onMounted(() => {
       transform: translateX(0);
 
       &::after {
-        width: 80%;
+        width: 80%; /* Pasek płynnie rozwija się w prawą stronę */
       }
     }
   }
 }
 
-/* Stylizacja elementów po usunięciu boxa - wyśrodkowany układ wewnątrz sekcji */
-.metrics-content {
+/* Układ wewnętrzny karty */
+.metrics-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   max-width: 650px;
-  margin: 0 auto; /* Centrowanie kolumny w ograniczonym kontenerze */
+  margin: 0 auto;
   width: 100%;
 
   &__icon {
@@ -166,17 +168,19 @@ onMounted(() => {
 }
 
 @media (max-width: 992px) {
-  .metrics-section {
+  .metrics-placeholder {
     padding: 60px 20px;
 
     &__main-title {
       font-size: 2.2rem;
       margin-bottom: 40px;
-      transform: translateX(-40px); /* Lżejszy wjazd na mobile */
+      transform: translateX(
+        25px
+      ); /* Delikatniejszy ruch na mniejszych ekranach */
     }
   }
 
-  .metrics-content {
+  .metrics-card {
     &__status {
       font-size: 1.6rem;
     }

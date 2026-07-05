@@ -161,16 +161,14 @@ onUnmounted(() => {
   overflow: hidden;
   border-bottom: 3px solid $primaryColor;
 
-  // 🎯 GENIALNY TRIK CSS: Inset(0) sprawia, że wszystkie elementy potomne typu 'fixed'
-  // zostaną ściśle przycięte do ram tego nagłówka i nie wyleją się na resztę podstron.
   clip-path: inset(0);
 
   &__bg {
-    position: fixed; // Zablokowany w oknie viewportu dla efektu paralaksy
+    position: fixed;
     inset: 0;
     background: url("@/assets/img/header.png") center/cover no-repeat;
     transform: scale(1.03);
-    animation: subtleZoom 12s infinite alternate ease-in-out; // Zoom powraca i działa niezależnie!
+    animation: subtleZoom 12s infinite alternate ease-in-out;
     z-index: 0;
     pointer-events: none;
   }
@@ -188,26 +186,23 @@ onUnmounted(() => {
     pointer-events: none;
   }
 
-  // 🌑 AKTYWNE ŚCIEMNIANIE SZEFA: Reaguje na scrollowanie strony
   &__darkener {
     position: fixed;
     inset: 0;
     background: #000000;
-    z-index: 2; // Wyżej niż tło i gradient, ale pod treścią (z-index: 3)
+    z-index: 2;
     pointer-events: none;
-    // Wykorzystujemy zmienną z Vue – maksymalne przyciemnienie w dole nagłówka wyniesie 80% (0.8)
     opacity: calc(var(--scroll-progress) * 0.8);
     will-change: opacity;
   }
 
   &__content {
     position: relative;
-    z-index: 3; // Treść wykracza ponad warstwy ściemniające
+    z-index: 3;
     max-width: 950px;
     padding: 40px 20px;
   }
 
-  // 🛡️ ODZNAKA KLANOWA (Fragment do podmiany w CSS)
   &__badge-wrapper {
     display: inline-flex;
     align-items: center;
@@ -217,17 +212,12 @@ onUnmounted(() => {
 
   .husaria-wing {
     display: block;
-    width: 52px; // Delikatnie zwiększone, żeby pióra były świetnie widoczne
+    width: 52px;
     height: 52px;
     filter: drop-shadow(0 0 8px rgba($primaryColor, 0.6));
     opacity: 0.95;
 
-    &--left {
-      // Ratuje naturalny układ: skrzydło unosi się w górę i rozkłada na zewnątrz
-    }
-
     &--right {
-      // 🔥 Czyste, poziome odbicie lustrzane. Skrzydło leci w górę i w prawo!
       transform: scaleX(-1);
     }
   }
@@ -241,7 +231,6 @@ onUnmounted(() => {
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.9);
   }
 
-  // 👑 TYTUŁ GŁÓWNY
   &__title {
     font-family: $headerFont;
     font-size: 6rem;
@@ -291,9 +280,17 @@ onUnmounted(() => {
 
   &__actions {
     display: flex;
+    gap: 20px;
     justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
   }
 }
 
@@ -497,20 +494,24 @@ onUnmounted(() => {
 }
 
 // ==========================================
-// PRZYCISKI AKCJI
+// PRZYCISKI AKCJI (UJEDNOLICONY I SPÓJNY ROZMIAR)
 // ==========================================
 .btn-action {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center; /* Wyśrodkowanie zawartości */
   gap: 15px;
+  flex: 1; /* Równe proporcje na desktopie */
+  min-width: 280px; /* Stała, bezpieczna szerokość minimalna */
+  max-width: 300px; /* Próg rozciągania */
   color: #ffffff;
   font-family: $headerFont;
   font-size: 1.2rem;
   font-weight: bold;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 18px 38px;
+  padding: 18px 20px; /* Zmniejszony padding boczny, by dać przestrzeń tekstom */
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
@@ -541,10 +542,12 @@ onUnmounted(() => {
     height: 26px;
     font-size: 1.4rem;
     transition: transform 0.3s ease;
+    flex-shrink: 0; /* Zabezpieczenie ikonki przed zgniataniem */
   }
   &__text {
     letter-spacing: 1px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    white-space: nowrap; /* Absolutna blokada łamania tekstu w ramce */
   }
 
   &--discord {
@@ -601,6 +604,12 @@ onUnmounted(() => {
     .btn-action__icon {
       transform: scale(1.2);
     }
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    max-width: 320px;
+    flex: none; /* Wyłączenie proporcji flex na rzecz pełnej szerokości */
   }
 }
 
@@ -730,8 +739,6 @@ onUnmounted(() => {
 // ==========================================
 @media (max-width: 768px) {
   .hero-header {
-    // Mobilki kompletnie nie radzą sobie z wycinaniem fixed warstw, więc
-    // dla zachowania płynności interfejsu i braku lagów cofamy pozycjonowanie.
     &__bg,
     &__overlay,
     &__darkener {

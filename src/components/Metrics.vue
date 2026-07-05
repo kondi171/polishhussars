@@ -1,178 +1,188 @@
 <script setup>
-const clans = [
-  {
-    type: "Klan Główny",
-    name: "Polska Husaria",
-    tag: "#2YRL8C2Q2",
-    icon: "🛡️",
-    stats: { level: 18, warWins: 420, cwl: "Masters I" },
-  },
-  {
-    type: "Akademia",
-    name: "Polska KropIAK",
-    tag: "#2G0UV8RGC",
-    icon: "📖",
-    stats: { level: 10, warWins: 150, cwl: "Crystal II" },
-  },
-  {
-    type: "CW podczas CWL",
-    name: "Liga Dobra",
-    tag: "#2YRL8C2Q2",
-    icon: "💀",
-    stats: { level: 12, warWins: 198, cwl: "Masters III" },
-  },
-];
+import { ref, onMounted } from "vue";
+
+const mainTitle = ref(null);
+
+onMounted(() => {
+  const observerOptions = {
+    root: null,
+    threshold: 0.1,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("isVisible"); // Konwencja CamelCase
+      } else {
+        entry.target.classList.remove("isVisible");
+      }
+    });
+  }, observerOptions);
+
+  if (mainTitle.value) observer.observe(mainTitle.value);
+});
 </script>
 
 <template>
   <section class="metrics-section container">
-    <div class="metrics-section__header">
-      <h2 class="metrics-section__title">⚜️ Rodzina Klanów ⚜️</h2>
-      <p class="metrics-section__subtitle">
-        Nasze dywizje i aktualne osiągnięcia w uniwersum Clash of Clans
-      </p>
-    </div>
+    <h2 ref="mainTitle" class="metrics-section__main-title">Metryki</h2>
 
-    <div class="metrics-section__grid">
-      <div v-for="(clan, idx) in clans" :key="idx" class="clan-card">
-        <div class="clan-card__badge">{{ clan.type }}</div>
+    <div class="metrics-content">
+      <div class="metrics-content__icon">📊</div>
 
-        <div class="clan-card__main">
-          <div class="clan-card__icon">{{ clan.icon }}</div>
-          <div class="clan-card__info">
-            <h3 class="clan-card__name">{{ clan.name }}</h3>
-            <span class="clan-card__tag">Tag: {{ clan.tag }}</span>
-          </div>
-        </div>
+      <h3 class="metrics-content__status">Już wkrótce...</h3>
 
-        <div class="clan-card__stats">
-          <div class="stat-item">
-            <span class="stat-item__label">Poziom</span>
-            <span class="stat-item__value">{{ clan.stats.level }}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-item__label">Wygrane Wojny</span>
-            <span class="stat-item__value">{{ clan.stats.warWins }}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-item__label">Liga CWL</span>
-            <span class="stat-item__value stat-item__value--gold">{{
-              clan.stats.cwl
-            }}</span>
-          </div>
-        </div>
+      <div class="metrics-content__progress-bar">
+        <div class="bar-fill"></div>
       </div>
+
+      <p class="metrics-content__description">
+        Trwają prace nad wdrożeniem autorskiego systemu synchronizacji danych.
+        Wkrótce zyskasz wgląd w aktualne poziomy klanów, historię wygranych
+        wojen oraz szczegółowe statystyki aktywności członków.
+      </p>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
 .metrics-section {
-  padding: 60px 20px 100px 20px;
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: column;
 
-  &__header {
-    text-align: center;
-    margin-bottom: 50px;
-  }
-
-  &__title {
+  &__main-title {
     font-family: $headerFont;
-    color: $primaryColor;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-  }
+    color: #e6e2de;
+    font-size: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 60px;
+    position: relative;
 
-  &__subtitle {
-    color: $fontColor;
-    font-size: 1.1rem;
-  }
+    /* Wyrównanie tytułu do lewej krawędzi kontenera */
+    width: fit-content;
+    margin-right: auto;
+    text-align: left;
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
+    opacity: 0;
+    transform: translateX(-80px);
+    will-change: transform, opacity;
+    transition:
+      transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.9s ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -15px;
+      left: 0; /* Linia rośnie od lewej */
+      width: 0;
+      height: 3px;
+      background-color: $primaryColor;
+      transition: width 2s ease-in-out;
+      will-change: width;
+    }
+
+    &.isVisible {
+      opacity: 1;
+      transform: translateX(0);
+
+      &::after {
+        width: 80%;
+      }
+    }
   }
 }
 
-.clan-card {
-  background: linear-gradient(
-    135deg,
-    $backgroundColor 0%,
-    $supportLightColor 100%
-  );
-  border: $borderGame;
-  border-radius: 6px;
-  padding: 24px;
-  box-shadow: $boxShadowHeavy;
-  position: relative;
-
-  &__badge {
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: $redColor;
-    border: 1px solid $primaryColor;
-    padding: 4px 16px;
-    font-family: $headerFont;
-    font-size: 0.85rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  &__main {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 10px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba($primaryColor, 0.2);
-  }
+/* Stylizacja elementów po usunięciu boxa - wyśrodkowany układ wewnątrz sekcji */
+.metrics-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto; /* Centrowanie kolumny w ograniczonym kontenerze */
+  width: 100%;
 
   &__icon {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
+    margin-bottom: 15px;
   }
 
-  &__name {
-    margin: 0 0 4px 0;
+  &__status {
     font-family: $headerFont;
-    font-size: 1.4rem;
-    color: $fontColor;
-  }
-
-  &__tag {
-    font-size: 0.9rem;
     color: $primaryColor;
-    font-family: monospace;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 25px 0;
   }
 
-  &__stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    text-align: center;
+  &__progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba($primaryColor, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 35px;
+
+    .bar-fill {
+      height: 100%;
+      width: 65%;
+      background: linear-gradient(90deg, $primaryColor, $redColor);
+      border-radius: 10px;
+      animation: progressShimmy 1.5s infinite linear;
+      background-size: 30px 30px;
+      background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+      );
+    }
+  }
+
+  &__description {
+    color: #b0a8a0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
   }
 }
 
-.stat-item {
-  &__label {
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: $fontColor;
-    margin-bottom: 4px;
+@keyframes progressShimmy {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 30px 0;
+  }
+}
+
+@media (max-width: 992px) {
+  .metrics-section {
+    padding: 60px 20px;
+
+    &__main-title {
+      font-size: 2.2rem;
+      margin-bottom: 40px;
+      transform: translateX(-40px); /* Lżejszy wjazd na mobile */
+    }
   }
 
-  &__value {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: $fontColor;
+  .metrics-content {
+    &__status {
+      font-size: 1.6rem;
+    }
 
-    &--gold {
-      color: $primaryColor;
+    &__description {
+      font-size: 1rem;
     }
   }
 }

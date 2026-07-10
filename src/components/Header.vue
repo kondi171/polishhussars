@@ -115,7 +115,7 @@ onUnmounted(() => {
 
       <div class="hero-header__actions">
         <a
-          href="https://discord.gg/4ZYAdMEK"
+          href="https://discord.gg/XZRFgfzwN"
           target="_blank"
           class="btn-action btn-action--discord anim--pulseDiscord anim--btnInLeft"
         >
@@ -132,7 +132,7 @@ onUnmounted(() => {
         </a>
 
         <a
-          href="https://link.clashofclans.com/en?action=OpenClanProfile&tag=2YRL8C2Q2"
+          href="https://link.clashofclans.com/en/?action=OpenClanProfile&tag=2YRL8C2Q2"
           target="_blank"
           class="btn-action btn-action--game anim--pulseGame anim--btnInRight"
         >
@@ -166,7 +166,7 @@ onUnmounted(() => {
   &__bg {
     position: fixed;
     inset: 0;
-    background: url("@/assets/img/header.png") center/cover no-repeat;
+    background: url("/img/sections/header.png") center/cover no-repeat;
     transform: scale(1.03);
     animation: subtleZoom 12s infinite alternate ease-in-out;
     z-index: 0;

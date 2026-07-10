@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-const discordLink = "https://discord.gg/4ZYAdMEK";
+const discordLink = "https://discord.gg/XZRFgfzwN";
 const clanLink =
-  "https://link.clashofclans.com/en?action=OpenClanProfile&tag=2YRL8C2Q2";
+  "https://link.clashofclans.com/en/?action=OpenClanProfile&tag=2YRL8C2Q2";
 
 const sectionRef = ref(null);
 let observer = null;
@@ -97,7 +97,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0 20px;
-  background-image: url("@/assets/img/join.png");
+  background-image: url("/img/sections/join.png");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

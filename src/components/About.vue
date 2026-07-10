@@ -20,6 +20,10 @@ const offers = [
     label: "Stabilna Społeczność",
     text: "Dojrzałe środowisko bez toksyczności, nastawione na długofalową i wspólną zabawę.",
   },
+  {
+    label: "Własny System Metryczny",
+    text: "Dedykowany dashboard i zaawansowana analityka. Śledzimy aktywność, donacje oraz postępy w klanach, dając każdemu pełny wgląd w rozwój całej rodziny.",
+  },
 ];
 
 const requirements = [

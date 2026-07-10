@@ -2,7 +2,7 @@
 import Navbar from "@/components/Navbar.vue";
 import Header from "@/components/Header.vue";
 import About from "@/components/About.vue";
-import Family from "@/components/Family.vue"; // Poprawiono ścieżkę na spójny alias @
+import Family from "@/components/Family.vue";
 import Metrics from "@/components/Metrics.vue";
 import Join from "@/components/Join.vue";
 import Footer from "@/components/Footer.vue";

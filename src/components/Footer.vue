@@ -2,10 +2,10 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 // Importy grafik (Vite ESM)
-import cocLogo from "@/assets/img/coc.png";
-import iosBadge from "@/assets/img/ios.webp";
-import androidBadge from "@/assets/img/android.webp";
-import amazonBadge from "@/assets/img/amazon.webp";
+import cocLogo from "/img/footer/coc.png";
+import iosBadge from "/img/footer/ios.webp";
+import androidBadge from "/img/footer/android.webp";
+import amazonBadge from "/img/footer/amazon.webp";
 
 const footerRef = ref(null);
 let observer = null;
@@ -72,7 +72,7 @@ onUnmounted(() => {
 
           <!-- Google Play -->
           <a
-            href="https://play.google.com/store/apps/details?id=com.supercell.clashofclans"
+            href="https://play.google.com/store/custom-url"
             target="_blank"
             rel="noopener noreferrer"
             class="supercell-store-link"
@@ -94,20 +94,49 @@ onUnmounted(() => {
 
       <hr class="game-footer__separator" />
 
-      <!-- 📜 INFORMACJE PRAWNE i REFLINK -->
+      <!-- 📜 INFORMACJE PRAWNE i ROZBUDOWANY REFLINK AUTORSKI -->
       <div class="game-footer__legal">
-        <p class="game-footer__author">
-          Projekt i wykonanie:
-          <a
-            href="https://github.com/kondi171"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="author-link"
-          >
-            @KondiThePrime
-          </a>
+        <div class="game-footer__credits">
+          <span class="credits-title">Projekt i wykonanie:</span>
+          <div class="credits-accounts">
+            <a
+              href="https://github.com/kondi171"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-link"
+            >
+              👑 @KondiTheKing <span class="role">[Product Owner]</span>
+            </a>
+            <a
+              href="https://github.com/kondi171"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-link"
+            >
+              ⚡ @KondiThePrime <span class="role">[Lead Architect]</span>
+            </a>
+            <a
+              href="https://github.com/kondi171"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-link"
+            >
+              👹 @KondiTheBeast <span class="role">[Backend Monster]</span>
+            </a>
+            <a
+              href="https://github.com/kondi171"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="author-link"
+            >
+              🧠 @KondiTheMentor <span class="role">[Code Reviewer]</span>
+            </a>
+          </div>
+        </div>
+
+        <p class="game-footer__copy">
+          &copy; 2026 Polska Husaria. Wszelkie prawa zastrzeżone.
         </p>
-        <p>&copy; 2026 Polska Husaria. Wszelkie prawa zastrzeżone.</p>
 
         <p class="game-footer__disclaimer">
           Ta strona nie jest powiązana z Supercell, nie jest przez nich
@@ -173,7 +202,7 @@ onUnmounted(() => {
   line-height: 1.6;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
   transform: translateY(20px);
   transition:
     transform 0.6s ease,
@@ -201,7 +230,7 @@ onUnmounted(() => {
   }
 
   .game-footer__legal {
-    opacity: 0.7; // Utrzymujemy pierwotną nieprzezroczystość layoutu
+    opacity: 0.7;
     transform: translateY(0);
     transition-delay: 0.45s;
   }
@@ -229,7 +258,6 @@ onUnmounted(() => {
     border-radius: 14px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     object-fit: cover;
-    // Wykorzystanie CamelCase dla płynnej pulsacji poświaty w tle
     animation: logoAmbientPulse 4s infinite ease-in-out;
   }
 
@@ -261,32 +289,68 @@ onUnmounted(() => {
   }
 }
 
-// Stylowanie linku autora
-.game-footer__author {
-  font-size: 0.85rem;
-  color: #8a8580;
-  margin: 0;
+// NOWY SYSTEM EMERYTALNY DLA KONT DEWELOPERSKICH
+.game-footer__credits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  .credits-title {
+    font-size: 0.8rem;
+    color: #8a8580;
+    text-transform: uppercase;
+    font-family: $headerFont;
+    letter-spacing: 1px;
+  }
+}
+
+.credits-accounts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 24px;
+  flex-wrap: wrap;
 
   .author-link {
     color: $primaryColor;
     text-decoration: none;
     font-weight: 600;
     letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    white-space: nowrap;
     transition:
       color 0.2s ease,
       text-shadow 0.2s ease;
 
+    .role {
+      font-size: 0.75rem;
+      color: #6a645e;
+      font-weight: 400;
+      margin-left: 4px;
+      transition: color 0.2s ease;
+    }
+
     &:hover {
       color: $hoverColor;
       text-shadow: 0 0 8px rgba($primaryColor, 0.6);
+
+      .role {
+        color: #8a8580;
+      }
     }
   }
+}
+
+.game-footer__copy {
+  margin: 0;
 }
 
 .game-footer__disclaimer {
   font-size: 0.75rem;
   opacity: 0.5;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 // ==========================================
@@ -354,12 +418,16 @@ onUnmounted(() => {
     }
   }
 
-  // Korekta kierunków animacji dla urządzeń mobilnych (zamiast z boku, wjeżdżają pionowo)
   .supercell-download__game {
     transform: translateY(-30px);
   }
   .supercell-download__stores {
     transform: translateY(30px);
+  }
+
+  .credits-accounts {
+    flex-direction: column;
+    gap: 6px;
   }
 }
 

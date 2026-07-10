@@ -13,7 +13,7 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         api: "modern-compiler",
-        additionalData: `@use "@/assets/scss/_variables.scss" as *;`,
+        additionalData: `@use "@/scss/_variables.scss" as *;`,
         silenceDeprecations: ["import"],
         quietDeps: true,
       },
